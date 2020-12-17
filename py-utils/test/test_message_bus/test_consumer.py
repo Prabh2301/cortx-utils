@@ -1,7 +1,8 @@
-#!/usr/bin/env python3
-
-# CORTX-Py-Utils: CORTX Python common library.
+# !/usr/bin/env python3
+#
+# CORTX Python common library.
 # Copyright (c) 2020 Seagate Technology LLC and/or its Affiliates
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation, either version 3 of the License, or
@@ -15,9 +16,27 @@
 # For any questions about this software or licensing,
 # please email opensource@seagate.com or cortx-questions@seagate.com.
 
-__title__ = 'message_bus'
 
-from cortx.utils.message_bus.message_bus import MessageBus
-from cortx.utils.message_bus.message_bus_client import MessageProducer, MessageConsumer
-from cortx.utils.message_bus.message_broker import MessageBroker, MessageBrokerFactory
-from cortx.utils.message_bus.error import MessageBusError
+import unittest
+from cortx.utils.message_bus import MessageBus, MessageConsumer
+
+
+class TestMessage(unittest.TestCase):
+    """ Test MessageBus related functionality. """
+
+    def test_receive(self):
+        """ Test Receive Message. """
+        message_bus = MessageBus()
+        consumer = MessageConsumer(message_bus, consumer_id="sel", \
+            consumer_group="sel", message_type=['Sel'], auto_ack=False, \
+            offset='earliest')
+
+        self.assertIsNotNone(consumer, "Consumer not found")
+        messages = consumer.receive()
+        self.assertIsNotNone(messages, "Messages not found")
+        for message in messages:
+            print(message)
+
+
+if __name__ == '__main__':
+    unittest.main()
